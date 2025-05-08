@@ -1,0 +1,10 @@
+C:\Users\81vv00k9gj\OneDrive\Escritorio\c#\SimulacionTrafico\SimulacionTrafico\obj\Debug\SimulacionTrafico.csproj.AssemblyReference.cache
+C:\Users\81vv00k9gj\OneDrive\Escritorio\c#\SimulacionTrafico\SimulacionTrafico\obj\Debug\SimulacionTrafico.MainForm.resources
+C:\Users\81vv00k9gj\OneDrive\Escritorio\c#\SimulacionTrafico\SimulacionTrafico\obj\Debug\SimulacionTrafico.Properties.Resources.resources
+C:\Users\81vv00k9gj\OneDrive\Escritorio\c#\SimulacionTrafico\SimulacionTrafico\obj\Debug\SimulacionTrafico.csproj.GenerateResource.cache
+C:\Users\81vv00k9gj\OneDrive\Escritorio\c#\SimulacionTrafico\SimulacionTrafico\obj\Debug\SimulacionTrafico.csproj.CoreCompileInputs.cache
+C:\Users\81vv00k9gj\OneDrive\Escritorio\c#\SimulacionTrafico\SimulacionTrafico\bin\Debug\SimulacionTrafico.exe.config
+C:\Users\81vv00k9gj\OneDrive\Escritorio\c#\SimulacionTrafico\SimulacionTrafico\bin\Debug\SimulacionTrafico.exe
+C:\Users\81vv00k9gj\OneDrive\Escritorio\c#\SimulacionTrafico\SimulacionTrafico\bin\Debug\SimulacionTrafico.pdb
+C:\Users\81vv00k9gj\OneDrive\Escritorio\c#\SimulacionTrafico\SimulacionTrafico\obj\Debug\SimulacionTrafico.exe
+C:\Users\81vv00k9gj\OneDrive\Escritorio\c#\SimulacionTrafico\SimulacionTrafico\obj\Debug\SimulacionTrafico.pdb
