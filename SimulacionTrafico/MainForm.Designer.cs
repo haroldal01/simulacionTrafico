@@ -33,12 +33,14 @@
             this.btnDetener = new System.Windows.Forms.Button();
             this.btnIniciar = new System.Windows.Forms.Button();
             this.fileSystemWatcher1 = new System.IO.FileSystemWatcher();
+            this.txtReporte = new System.Windows.Forms.TextBox();
             this.panelMapa.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
             this.SuspendLayout();
             // 
             // panelMapa
             // 
+            this.panelMapa.Controls.Add(this.txtReporte);
             this.panelMapa.Controls.Add(this.lblCongestion);
             this.panelMapa.Controls.Add(this.btnDetener);
             this.panelMapa.Controls.Add(this.btnIniciar);
@@ -85,6 +87,14 @@
             this.fileSystemWatcher1.EnableRaisingEvents = true;
             this.fileSystemWatcher1.SynchronizingObject = this;
             // 
+            // txtReporte
+            // 
+            this.txtReporte.Location = new System.Drawing.Point(12, 485);
+            this.txtReporte.Multiline = true;
+            this.txtReporte.Name = "txtReporte";
+            this.txtReporte.Size = new System.Drawing.Size(215, 175);
+            this.txtReporte.TabIndex = 3;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -107,6 +117,7 @@
         private System.Windows.Forms.Button btnIniciar;
         private System.Windows.Forms.Button btnDetener;
         private System.Windows.Forms.Label lblCongestion;
+        private System.Windows.Forms.TextBox txtReporte;
     }
 }
 

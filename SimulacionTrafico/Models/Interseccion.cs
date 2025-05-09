@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SimulacionTrafico.Models
 {
@@ -18,6 +15,16 @@ namespace SimulacionTrafico.Models
         public Interseccion SurAdyacente { get; set; }
         public Interseccion EsteAdyacente { get; set; }
         public Interseccion OesteAdyacente { get; set; }
+        public double AverageTransitTime { get; private set; } // tiempo promedio en cruzar
+        public Dictionary<string, StreetType> StreetTypes { get; } //tipo de calle (unidireccional o bidireccional)
+        private int _transitCount; // conteo de vehículos que han cruzado
+        private double _totalTransitTime; //suma de tiempos de cruce
+
+        public enum StreetType
+        {
+            Unidirectional,
+            Bidirectional
+        }
 
         public Interseccion(string id)
         {
@@ -27,6 +34,16 @@ namespace SimulacionTrafico.Models
             Este = new ColaVehiculos();
             Oeste = new ColaVehiculos();
             SemaforoNorteSur = true;
+            StreetTypes = new Dictionary<string, StreetType>
+            {
+                { "norte", StreetType.Bidirectional },
+                { "sur", StreetType.Bidirectional },
+                { "este", StreetType.Unidirectional },
+                { "oeste", StreetType.Unidirectional }
+            };
+            AverageTransitTime = 0;
+            _transitCount = 0;
+            _totalTransitTime = 0;
         }
 
         public void CambiarSemaforo()
@@ -41,7 +58,6 @@ namespace SimulacionTrafico.Models
 
         public void AgregarVehiculo(Vehiculo vehiculo, string direccion)
         {
-            // Validar dirección y agregar a la cola correspondiente
             switch (direccion.ToLower())
             {
                 case "norte":
@@ -57,11 +73,16 @@ namespace SimulacionTrafico.Models
                     Oeste.Encolar(vehiculo);
                     break;
                 default:
-                    throw new ArgumentException($"Dirección '{direccion}' no válida. Use: norte, sur, este u oeste");
+                    throw new ArgumentException($"Dirección '{direccion}' no válida.");
             }
-
-            // Actualizar tiempo de espera del vehículo
             vehiculo.TiempoEspera = 0;
+        }
+
+        public void RecordTransitTime(double transitTime)
+        {
+            _totalTransitTime += transitTime;
+            _transitCount++;
+            AverageTransitTime = _transitCount > 0 ? _totalTransitTime / _transitCount : 0;
         }
     }
 }

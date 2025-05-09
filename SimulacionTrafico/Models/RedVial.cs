@@ -31,13 +31,13 @@ namespace SimulacionTrafico.Models
             var este = new Interseccion("Este");
             var oeste = new Interseccion("Oeste");
 
-            // Bidirectional Norte-Sur connections
+            // Bidirectional Norte-Sur 
             centro.NorteAdyacente = norte;
             norte.SurAdyacente = centro;
             centro.SurAdyacente = sur;
             sur.NorteAdyacente = centro;
 
-            // Unidirectional Este-Oeste connections (for simplicity, can be extended)
+            // Unidirectional Este-Oeste 
             centro.EsteAdyacente = este;
             este.OesteAdyacente = centro;
             centro.OesteAdyacente = oeste;
@@ -48,6 +48,23 @@ namespace SimulacionTrafico.Models
             _intersecciones.Agregar(sur);
             _intersecciones.Agregar(este);
             _intersecciones.Agregar(oeste);
+        }
+
+        public string GenerarReporteCuellosDeBotella()
+        {
+            StringBuilder reporte = new StringBuilder("Reporte de Cuellos de Botella:\n");
+            var nodoActual = _intersecciones.PrimerNodo;
+            while (nodoActual != null)
+            {
+                var inter = nodoActual.Interseccion;
+                int congestion = inter.ObtenerCongestion();
+                if (congestion > 5) 
+                {
+                    reporte.AppendLine($"Intersección {inter.Id}: {congestion} vehículos, Tiempo Promedio: {inter.AverageTransitTime:F2}s");
+                }
+                nodoActual = _intersecciones.ObtenerSiguiente(nodoActual);
+            }
+            return reporte.ToString();
         }
 
         public Interseccion ObtenerInterseccionMasCongestionada()
