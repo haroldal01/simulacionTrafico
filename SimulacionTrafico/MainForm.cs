@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using SimulacionTrafico.Models;
+using SimulacionTrafico.Models.SimulacionTrafico.Models;
 namespace SimulacionTrafico
 {
     public partial class MainForm : Form
@@ -19,33 +20,105 @@ namespace SimulacionTrafico
             _dbManager = new DatabaseManager();
         }
 
-        private void DibujarInterseccion(Graphics g, Interseccion inter, int centerX, int centerY, int radio)
+        private void DibujarInterseccion(Graphics g, Interseccion inter, int centerX, int centerY, int roadWidth)
         {
             Point posicion = ObtenerPosicion(inter.Id, centerX, centerY);
+            int intersectionSize = roadWidth; // Size of the intersection (same as road width for clarity)
             int congestion = inter.ObtenerCongestion();
             Color color = congestion == 0 ? Color.Green :
                          congestion < 5 ? Color.Yellow : Color.Red;
 
-            g.FillEllipse(new SolidBrush(color), posicion.X - radio, posicion.Y - radio, radio * 2, radio * 2);
-            g.DrawEllipse(Pens.Black, posicion.X - radio, posicion.Y - radio, radio * 2, radio * 2);
-            g.DrawString(inter.Id, Font, Brushes.Black, posicion.X - 15, posicion.Y - 10);
+            // Draw intersection as a small circle with congestion color
+            g.FillEllipse(new SolidBrush(color), posicion.X - intersectionSize / 2, posicion.Y - intersectionSize / 2, intersectionSize, intersectionSize);
+            g.DrawEllipse(Pens.Black, posicion.X - intersectionSize / 2, posicion.Y - intersectionSize / 2, intersectionSize, intersectionSize);
+
+            // Draw vehicles on the roads leading to the intersection
+            int squareSize = 10;
+            int laneOffset = roadWidth / 2 + 5; // Offset from the center of the road
+            DibujarVehiculos(g, inter.Norte, posicion, 0, -laneOffset, squareSize, "norte"); // North
+            DibujarVehiculos(g, inter.Sur, posicion, 0, laneOffset, squareSize, "sur");     // South
+            DibujarVehiculos(g, inter.Este, posicion, laneOffset, 0, squareSize, "este");   // East
+            DibujarVehiculos(g, inter.Oeste, posicion, -laneOffset, 0, squareSize, "oeste"); // West
+
+            // Draw traffic light indicator for the "Este" intersection
+            if (inter.Id == "Este")
+            {
+                int lightSize = 20;
+                int lightX = posicion.X + 50;
+                int lightY = posicion.Y - lightSize / 2;
+                Color lightColor = inter.SemaforoNorteSur ? Color.Green : Color.Red; // Green for NS, Red for EW
+                g.FillRectangle(new SolidBrush(lightColor), lightX, lightY, lightSize, lightSize);
+                g.DrawRectangle(Pens.Black, lightX, lightY, lightSize, lightSize);
+            }
         }
 
-        private void DibujarConexiones(Graphics g, Interseccion inter, int centerX, int centerY)
+        private void DibujarVehiculos(Graphics g, ColaVehiculos cola, Point center, int dx, int dy, int squareSize, string direccion)
         {
-            Point pInter = ObtenerPosicion(inter.Id, centerX, centerY);
+            NodoVehiculo nodo = new NodoVehiculo(null); // Temporary node to traverse
+            nodo.Siguiente = cola.Primero; // Use the public property
+            int count = 0;
+            while (nodo.Siguiente != null && count < cola.Cantidad)
+            {
+                int x, y;
+                if (direccion == "norte" || direccion == "sur")
+                {
+                    x = center.X + dx - squareSize / 2;
+                    y = center.Y + dy - squareSize / 2 - (count * (squareSize + 5)); // Stack vertically
+                    if (direccion == "sur") y = center.Y + dy - squareSize / 2 + (count * (squareSize + 5));
+                }
+                else // este or oeste
+                {
+                    x = center.X + dx - squareSize / 2 + (count * (squareSize + 5)); // Stack horizontally
+                    y = center.Y + dy - squareSize / 2;
+                    if (direccion == "oeste") x = center.X + dx - squareSize / 2 - (count * (squareSize + 5));
+                }
+                g.FillRectangle(Brushes.Red, x, y, squareSize, squareSize); // Red squares for vehicles
+                g.DrawRectangle(Pens.Black, x, y, squareSize, squareSize); // Outline for clarity
+                nodo = nodo.Siguiente;
+                count++;
+            }
+        }
 
-            if (inter.NorteAdyacente != null)
-                g.DrawLine(new Pen(Color.Blue, 2), pInter, ObtenerPosicion(inter.NorteAdyacente.Id, centerX, centerY));
+        private void DibujarConexiones(Graphics g, int centerX, int centerY, int roadWidth, int roadLength)
+        {
+            // Draw straight roads forming a cross
+            Pen roadPen = new Pen(Color.Black, roadWidth);
+            Pen lanePen = new Pen(Color.Yellow, 2);
 
-            if (inter.SurAdyacente != null)
-                g.DrawLine(new Pen(Color.Blue, 2), pInter, ObtenerPosicion(inter.SurAdyacente.Id, centerX, centerY));
+            // Vertical road (Norte-Sur)
+            g.DrawLine(roadPen, centerX, centerY - roadLength, centerX, centerY + roadLength);
+            g.DrawLine(lanePen, centerX, centerY - roadLength, centerX, centerY + roadLength); // Center lane
 
-            if (inter.EsteAdyacente != null)
-                g.DrawLine(new Pen(Color.Red, 2), pInter, ObtenerPosicion(inter.EsteAdyacente.Id, centerX, centerY));
+            // Horizontal road (Este-Oeste)
+            g.DrawLine(roadPen, centerX - roadLength, centerY, centerX + roadLength, centerY);
+            g.DrawLine(lanePen, centerX - roadLength, centerY, centerX + roadLength, centerY); // Center lane
+        }
 
-            if (inter.OesteAdyacente != null)
-                g.DrawLine(new Pen(Color.Red, 2), pInter, ObtenerPosicion(inter.OesteAdyacente.Id, centerX, centerY));
+        private void panelMapa_Paint(object sender, PaintEventArgs e)
+        {
+            if (_redVial?.Intersecciones == null) return;
+            var g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            g.Clear(System.Drawing.Color.White);
+
+            int centerX = panelMapa.Width / 2;
+            int centerY = panelMapa.Height / 2;
+            int roadWidth = 30; // Width of the roads
+            int roadLength = 150; // Length of each road segment
+
+            // Draw the roads first
+            DibujarConexiones(g, centerX, centerY, roadWidth, roadLength);
+
+            // Draw intersections and vehicles
+            var nodoActual = _redVial.Intersecciones.PrimerNodo;
+            while (nodoActual != null)
+            {
+                if (nodoActual.Interseccion != null)
+                {
+                    DibujarInterseccion(g, nodoActual.Interseccion, centerX, centerY, roadWidth);
+                }
+                nodoActual = _redVial.Intersecciones.ObtenerSiguiente(nodoActual);
+            }
         }
 
         private void TimerSimulacion_Tick(object sender, EventArgs e)
@@ -58,7 +131,7 @@ namespace SimulacionTrafico
                 while (nodoActual != null)
                 {
                     nodoActual.Interseccion.CambiarSemaforo();
-                    _dbManager.UpdateIntersection(nodoActual.Interseccion); // se actualiza la base de datos
+                    _dbManager.UpdateIntersection(nodoActual.Interseccion);
                     nodoActual = _redVial.Intersecciones.ObtenerSiguiente(nodoActual);
                 }
             }
@@ -82,18 +155,12 @@ namespace SimulacionTrafico
 
                 if (inter.SemaforoNorteSur)
                 {
-                    // Mover de norte a sur
                     MoverEntreColas(inter.Norte, inter.SurAdyacente?.Sur);
-
-                    // Mover de sur a norte
                     MoverEntreColas(inter.Sur, inter.NorteAdyacente?.Norte);
                 }
                 else
                 {
-                    // Mover de este a oeste
                     MoverEntreColas(inter.Este, inter.OesteAdyacente?.Oeste);
-
-                    // Mover de oeste a este
                     MoverEntreColas(inter.Oeste, inter.EsteAdyacente?.Este);
                 }
 
@@ -107,7 +174,7 @@ namespace SimulacionTrafico
             {
                 var vehiculo = origen.Desencolar();
                 destino.Encolar(vehiculo);
-                _dbManager.LogEvent(destino.ToString(), $"Vehículo {vehiculo.Id} movido a destino", vehiculo.Id); // se guarda el evento en la base de datos
+                _dbManager.LogEvent(destino.ToString(), $"Vehículo {vehiculo.Id} movido a destino", vehiculo.Id);
             }
         }
 
@@ -126,13 +193,13 @@ namespace SimulacionTrafico
             var destino = _redVial.Intersecciones.ObtenerPorIndice(indiceDestino);
 
             var vehiculo = new Vehiculo(_random.Next(1000, 9999), $"{origen.Id}→{destino.Id}");
-            _dbManager.InsertVehicle(vehiculo); // Save to database
+            _dbManager.InsertVehicle(vehiculo);
 
             string[] direcciones = { "norte", "sur", "este", "oeste" };
             string direccion = direcciones[_random.Next(0, 4)];
 
             origen.AgregarVehiculo(vehiculo, direccion);
-            _dbManager.LogEvent(origen.Id, $"Vehículo {vehiculo.Id} creado en {direccion}", vehiculo.Id); // se guarda el evento en la base de datos
+            _dbManager.LogEvent(origen.Id, $"Vehículo {vehiculo.Id} creado en {direccion}", vehiculo.Id);
         }
 
         private void ActualizarUI()
@@ -141,11 +208,9 @@ namespace SimulacionTrafico
             lblCongestion.Text = $"Tiempo: {_contadorTiempo}s | Mayor congestión: {masCongestionada?.Id ?? "N/A"} ({masCongestionada?.ObtenerCongestion() ?? 0} vehículos)";
         }
 
-
-
         private Point ObtenerPosicion(string id, int centerX, int centerY)
         {
-            int distancia = 100;
+            int distancia = 150; // Matches roadLength
             if (id == "Centro") return new Point(centerX, centerY);
             if (id == "Norte") return new Point(centerX, centerY - distancia);
             if (id == "Sur") return new Point(centerX, centerY + distancia);
@@ -154,57 +219,20 @@ namespace SimulacionTrafico
             return new Point(centerX, centerY);
         }
 
-        private void panelMapa_Paint(object sender, PaintEventArgs e)
-        {
-            if (_redVial?.Intersecciones == null) return;
-            var g = e.Graphics;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-            g.Clear(System.Drawing.Color.White);
-
-            int centerX = panelMapa.Width / 2;
-            int centerY = panelMapa.Height / 2;
-            int radio = 50;
-
-            //dibujar las concexiones
-            var nodoActual = _redVial.Intersecciones.PrimerNodo;
-            while (nodoActual != null)
-            {
-                if (nodoActual.Interseccion != null)
-                {
-                    DibujarConexiones(g, nodoActual.Interseccion, centerX, centerY);
-                }
-                nodoActual = _redVial.Intersecciones.ObtenerSiguiente(nodoActual);
-            }
-            // Dibujar las intersecciones
-            nodoActual = _redVial.Intersecciones.PrimerNodo;
-            while (nodoActual != null)
-            {
-                if (nodoActual.Interseccion != null)
-                {
-                    DibujarInterseccion(g, nodoActual.Interseccion, centerX, centerY, radio);
-                }
-                nodoActual = _redVial.Intersecciones.ObtenerSiguiente(nodoActual);
-            }
-
-        }
-
         private void btnIniciar_Click(object sender, EventArgs e)
         {
-            // Inicializar la red vial si no está creada
             if (_redVial == null)
             {
                 _redVial = new RedVial();
             }
 
-            // Configurar el temporizador
             if (_timerSimulacion == null)
             {
                 _timerSimulacion = new Timer();
-                _timerSimulacion.Interval = 1000; 
+                _timerSimulacion.Interval = 1000; // Faster updates for smoother animation
                 _timerSimulacion.Tick += TimerSimulacion_Tick;
             }
 
-            // Iniciar la simulación
             _timerSimulacion.Start();
             btnIniciar.Enabled = false;
             btnDetener.Enabled = true;
@@ -213,7 +241,6 @@ namespace SimulacionTrafico
 
         private void btnDetener_Click(object sender, EventArgs e)
         {
-            // Detener la simulación
             if (_timerSimulacion != null)
             {
                 _timerSimulacion.Stop();
@@ -222,7 +249,6 @@ namespace SimulacionTrafico
             btnIniciar.Enabled = true;
             btnDetener.Enabled = false;
 
-            // Mostrar estadísticas finales
             var masCongestionada = _redVial.ObtenerInterseccionMasCongestionada();
             lblCongestion.Text = $"Simulación detenida. Mayor congestión: {masCongestionada?.Id ?? "N/A"}";
         }

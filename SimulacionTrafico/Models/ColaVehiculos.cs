@@ -14,6 +14,8 @@ namespace SimulacionTrafico.Models
         private int _cantidad;
 
         public int Cantidad => _cantidad;
+        public NodoVehiculo Primero => _primero;
+
 
         public void Encolar(Vehiculo vehiculo)
         {

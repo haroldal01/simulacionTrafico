@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimulacionTrafico.Models.SimulacionTrafico.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,15 +31,15 @@ namespace SimulacionTrafico.Models
             var este = new Interseccion("Este");
             var oeste = new Interseccion("Oeste");
 
+            // Bidirectional Norte-Sur connections
             centro.NorteAdyacente = norte;
             norte.SurAdyacente = centro;
-
             centro.SurAdyacente = sur;
             sur.NorteAdyacente = centro;
 
+            // Unidirectional Este-Oeste connections (for simplicity, can be extended)
             centro.EsteAdyacente = este;
             este.OesteAdyacente = centro;
-
             centro.OesteAdyacente = oeste;
             oeste.EsteAdyacente = centro;
 

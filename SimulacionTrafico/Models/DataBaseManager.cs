@@ -37,7 +37,7 @@ namespace SimulacionTrafico.Models
                 // Create Vehicles table
                 string createVehiclesTable = @"
                     CREATE TABLE IF NOT EXISTS Vehicles (
-                        Id INTEGER PRIMARY KEY,
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
                         Ruta TEXT NOT NULL,
                         TiempoEspera INTEGER NOT NULL
                     )";
