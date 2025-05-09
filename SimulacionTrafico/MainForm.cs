@@ -7,6 +7,7 @@ namespace SimulacionTrafico
 {
     public partial class MainForm : Form
     {
+        // Variables
         private RedVial _redVial;
         private Timer _timerSimulacion;
         private int _contadorTiempo = 0;
