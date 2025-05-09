@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "7ryLIOQqE3E=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\81vv00k9gj\\OneDrive\\Escritorio\\c#\\SimulacionTrafico\\SimulacionTrafico\\SimulacionTrafico.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\81vv00k9gj\\.nuget\\packages\\stub.system.data.sqlite.core.netframework\\1.0.119\\stub.system.data.sqlite.core.netframework.1.0.119.nupkg.sha512",
+    "C:\\Users\\81vv00k9gj\\.nuget\\packages\\system.data.sqlite.core\\1.0.119\\system.data.sqlite.core.1.0.119.nupkg.sha512"
+  ],
+  "logs": []
+}

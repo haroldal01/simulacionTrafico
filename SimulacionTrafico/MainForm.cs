@@ -10,11 +10,13 @@ namespace SimulacionTrafico
         private Timer _timerSimulacion;
         private int _contadorTiempo = 0;
         private Random _random = new Random();
+        private DatabaseManager _dbManager;
 
         public MainForm()
         {
             InitializeComponent();
             _redVial = new RedVial();
+            _dbManager = new DatabaseManager();
         }
 
         private void DibujarInterseccion(Graphics g, Interseccion inter, int centerX, int centerY, int radio)
@@ -50,29 +52,25 @@ namespace SimulacionTrafico
         {
             _contadorTiempo++;
 
-            // 1. Cambiar semáforos periódicamente
-            if (_contadorTiempo % 5 == 0) // Cada 5 segundos
+            if (_contadorTiempo % 5 == 0)
             {
                 var nodoActual = _redVial.Intersecciones.PrimerNodo;
                 while (nodoActual != null)
                 {
                     nodoActual.Interseccion.CambiarSemaforo();
+                    _dbManager.UpdateIntersection(nodoActual.Interseccion); // se actualiza la base de datos
                     nodoActual = _redVial.Intersecciones.ObtenerSiguiente(nodoActual);
                 }
             }
 
-            // 2. Mover vehículos según semáforos
             MoverVehiculos();
-
-            // 3. Generar nuevos vehículos aleatoriamente (20% de probabilidad)
             if (_random.Next(0, 100) < 20)
             {
                 GenerarVehiculoAleatorio();
             }
 
-            // 4. Actualizar la interfaz
             ActualizarUI();
-            panelMapa.Invalidate(); // Redibujar el mapa
+            panelMapa.Invalidate();
         }
 
         private void MoverVehiculos()
@@ -109,6 +107,7 @@ namespace SimulacionTrafico
             {
                 var vehiculo = origen.Desencolar();
                 destino.Encolar(vehiculo);
+                _dbManager.LogEvent(destino.ToString(), $"Vehículo {vehiculo.Id} movido a destino", vehiculo.Id); // se guarda el evento en la base de datos
             }
         }
 
@@ -116,11 +115,9 @@ namespace SimulacionTrafico
         {
             if (_redVial.Intersecciones.Cantidad < 2) return;
 
-            // Seleccionar intersección origen aleatoria
             int indiceOrigen = _random.Next(0, _redVial.Intersecciones.Cantidad);
             var origen = _redVial.Intersecciones.ObtenerPorIndice(indiceOrigen);
 
-            // Seleccionar intersección destino diferente
             int indiceDestino;
             do
             {
@@ -128,13 +125,14 @@ namespace SimulacionTrafico
             } while (indiceDestino == indiceOrigen);
             var destino = _redVial.Intersecciones.ObtenerPorIndice(indiceDestino);
 
-            // Crear y agregar vehículo
             var vehiculo = new Vehiculo(_random.Next(1000, 9999), $"{origen.Id}→{destino.Id}");
+            _dbManager.InsertVehicle(vehiculo); // Save to database
 
             string[] direcciones = { "norte", "sur", "este", "oeste" };
             string direccion = direcciones[_random.Next(0, 4)];
 
             origen.AgregarVehiculo(vehiculo, direccion);
+            _dbManager.LogEvent(origen.Id, $"Vehículo {vehiculo.Id} creado en {direccion}", vehiculo.Id); // se guarda el evento en la base de datos
         }
 
         private void ActualizarUI()

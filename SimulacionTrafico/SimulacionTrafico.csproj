@@ -53,6 +53,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\ColaVehiculos.cs" />
+    <Compile Include="Models\DataBaseManager.cs" />
     <Compile Include="Models\Interseccion.cs" />
     <Compile Include="Models\ListaIntersecciones.cs" />
     <Compile Include="Models\NodoInterseccion.cs" />
@@ -87,6 +88,13 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <PackageReference Include="System.Data.SQLite.Core">
+      <Version>1.0.119</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

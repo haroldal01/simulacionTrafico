@@ -1,0 +1,71 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\81vv00k9gj\\OneDrive\\Escritorio\\c#\\SimulacionTrafico\\SimulacionTrafico\\SimulacionTrafico.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\81vv00k9gj\\OneDrive\\Escritorio\\c#\\SimulacionTrafico\\SimulacionTrafico\\SimulacionTrafico.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\81vv00k9gj\\OneDrive\\Escritorio\\c#\\SimulacionTrafico\\SimulacionTrafico\\SimulacionTrafico.csproj",
+        "projectName": "SimulacionTrafico",
+        "projectPath": "C:\\Users\\81vv00k9gj\\OneDrive\\Escritorio\\c#\\SimulacionTrafico\\SimulacionTrafico\\SimulacionTrafico.csproj",
+        "packagesPath": "C:\\Users\\81vv00k9gj\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\81vv00k9gj\\OneDrive\\Escritorio\\c#\\SimulacionTrafico\\SimulacionTrafico\\obj\\",
+        "projectStyle": "PackageReference",
+        "skipContentFileWrite": true,
+        "UsingMicrosoftNETSdk": false,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\81vv00k9gj\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net472"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://packagesource": {}
+        },
+        "frameworks": {
+          "net472": {
+            "projectReferences": {}
+          }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net472": {
+          "dependencies": {
+            "System.Data.SQLite.Core": {
+              "target": "Package",
+              "version": "[1.0.119, )"
+            }
+          }
+        }
+      },
+      "runtimes": {
+        "win": {
+          "#import": []
+        },
+        "win-arm64": {
+          "#import": []
+        },
+        "win-x64": {
+          "#import": []
+        },
+        "win-x86": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

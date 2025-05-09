@@ -8,3 +8,5 @@ C:\Users\81vv00k9gj\OneDrive\Escritorio\c#\SimulacionTrafico\SimulacionTrafico\b
 C:\Users\81vv00k9gj\OneDrive\Escritorio\c#\SimulacionTrafico\SimulacionTrafico\bin\Debug\SimulacionTrafico.pdb
 C:\Users\81vv00k9gj\OneDrive\Escritorio\c#\SimulacionTrafico\SimulacionTrafico\obj\Debug\SimulacionTrafico.exe
 C:\Users\81vv00k9gj\OneDrive\Escritorio\c#\SimulacionTrafico\SimulacionTrafico\obj\Debug\SimulacionTrafico.pdb
+C:\Users\81vv00k9gj\OneDrive\Escritorio\c#\SimulacionTrafico\SimulacionTrafico\bin\Debug\System.Data.SQLite.dll
+C:\Users\81vv00k9gj\OneDrive\Escritorio\c#\SimulacionTrafico\SimulacionTrafico\obj\Debug\Simulaci.2280B490.Up2Date
